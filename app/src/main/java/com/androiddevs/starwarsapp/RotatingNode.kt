@@ -26,7 +26,7 @@ class RotatingNode(
     private fun startAnimation() {
         objectAnimator = objectAnimator ?: createObjectAnimator().apply {
             target = this@RotatingNode
-            duration = (1000 * 360 / degreesPerSecond).toLong()
+            duration = (500 * 360 / degreesPerSecond).toLong()
             start()
         }
     }

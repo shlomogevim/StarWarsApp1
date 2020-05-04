@@ -4,6 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.ar.sceneform.plugin'
 
 sceneform.asset(
+        'sampledata/models1/Jet.obj',
+        'default',
+        'sampledata/models1/Jet.sfa',
+        'src/main/res/raw/jet'
+)
+
+sceneform.asset(
         'sampledata/models/Star Destroyer 1.obj',
         'default',
         'sampledata/models/Star Destroyer 1.sfa',
