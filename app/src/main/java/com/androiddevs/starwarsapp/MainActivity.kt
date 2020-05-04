@@ -1,6 +1,8 @@
 package com.androiddevs.starwarsapp
 
+import android.media.CamcorderProfile
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.ar.core.Anchor
@@ -24,6 +26,9 @@ class MainActivity : AppCompatActivity() {
 
     private var curCameraPosition = Vector3.zero()
     private val nodes = mutableListOf<RotatingNode>()
+    private lateinit var photoSaver: PhotoSaver
+    private lateinit var videoRecorder: VideoRecorder
+    private var isRecording = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +42,43 @@ class MainActivity : AppCompatActivity() {
         arFragment.arSceneView.scene.addOnUpdateListener {
             updateNodes()
         }
+
+        photoSaver = PhotoSaver(this)
+        videoRecorder = VideoRecorder(this).apply {
+            sceneView = arFragment.arSceneView
+
+            setVideoQuality(CamcorderProfile.QUALITY_1080P, resources.configuration.orientation)
+        }
+        setupFab()
     }
 
+    private fun setupFab() {
+        fab.setOnClickListener {
+            if (!isRecording) {
+                photoSaver.takePhoto(arFragment.arSceneView)
+            }
+        }
+
+        fab.setOnLongClickListener {
+            isRecording = videoRecorder.toggleRecordingState()
+            true
+        }
+
+        fab.setOnTouchListener { view, motionEvent ->
+
+            if (motionEvent.action == MotionEvent.ACTION_UP && isRecording) {
+
+                isRecording = videoRecorder.toggleRecordingState()
+
+                Toast.makeText(this, "Saved video to gallery!", Toast.LENGTH_LONG).show()
+
+                true
+
+            } else false
+
+        }
+
+    }
     private fun updateNodes() {
         curCameraPosition = arFragment.arSceneView.scene.camera.worldPosition
         for(node in nodes) {
